@@ -8,12 +8,7 @@ import type { ContextId, DropReason } from '../../types';
 import getStyles, { type Styles } from './get-styles';
 import { prefix } from '../data-attributes';
 import useLayoutEffect from '../use-isomorphic-layout-effect';
-
-const getHead = (): HTMLHeadElement => {
-  const head: ?HTMLHeadElement = document.querySelector('head');
-  invariant(head, 'Cannot find the head to append a style to');
-  return head;
-};
+import { getHead } from '../../root';
 
 const createStyleEl = (nonce?: string): HTMLStyleElement => {
   const el: HTMLStyleElement = document.createElement('style');

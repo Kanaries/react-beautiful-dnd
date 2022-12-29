@@ -1,5 +1,7 @@
 // @flow
 
+export * as DOM from './root';
+
 // Components
 
 export { default as DragDropContext } from './view/drag-drop-context';

@@ -1,8 +1,9 @@
 // @flow
 import { invariant } from '../invariant';
+import { getBody } from '../root';
 
-export default (): HTMLBodyElement => {
-  const body: ?HTMLBodyElement = document.body;
-  invariant(body, 'Cannot find document.body');
+export default (): HTMLElement => {
+  const body: ?HTMLElement = getBody();
+  invariant(body, 'Cannot find body element');
   return body;
 };

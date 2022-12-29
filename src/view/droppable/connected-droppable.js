@@ -3,7 +3,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import memoizeOne from 'memoize-one';
-import { invariant } from '../../invariant';
+import { getBody } from '../../root';
 import type {
   State,
   DroppableId,
@@ -226,11 +226,6 @@ export const makeMapStateToProps = (): Selector => {
 const mapDispatchToProps: DispatchProps = {
   updateViewportMaxScroll: updateViewportMaxScrollAction,
 };
-
-function getBody(): HTMLElement {
-  invariant(document.body, 'document.body is not ready');
-  return document.body;
-}
 
 const defaultProps = ({
   mode: 'standard',
