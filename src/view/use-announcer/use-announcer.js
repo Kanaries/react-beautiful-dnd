@@ -3,8 +3,8 @@ import { useRef, useEffect } from 'react';
 import { useMemo, useCallback } from 'use-memo-one';
 import type { Announce, ContextId } from '../../types';
 import { warning } from '../../dev-warning';
-import getBodyElement from '../get-body-element';
 import visuallyHidden from '../visually-hidden-style';
+import { useDOMContext } from '../../root';
 
 export const getId = (contextId: ContextId): string =>
   `rbd-announcement-${contextId}`;
@@ -12,6 +12,8 @@ export const getId = (contextId: ContextId): string =>
 export default function useAnnouncer(contextId: ContextId): Announce {
   const id: string = useMemo(() => getId(contextId), [contextId]);
   const ref = useRef<?HTMLElement>(null);
+
+  const ctx = useDOMContext();
 
   useEffect(
     function setup() {
@@ -33,7 +35,7 @@ export default function useAnnouncer(contextId: ContextId): Announce {
       Object.assign(el.style, visuallyHidden);
 
       // Add to body
-      getBodyElement().appendChild(el);
+      ctx.body.appendChild(el);
 
       return function cleanup() {
         // Not clearing the ref as it might be used by announce before the timeout expires
@@ -42,7 +44,7 @@ export default function useAnnouncer(contextId: ContextId): Announce {
         // during a mount be published
         setTimeout(function remove() {
           // checking if element exists as the body might have been changed by things like 'turbolinks'
-          const body: HTMLBodyElement = getBodyElement();
+          const body: HTMLBodyElement = ctx.body;
           if (body.contains(el)) {
             body.removeChild(el);
           }

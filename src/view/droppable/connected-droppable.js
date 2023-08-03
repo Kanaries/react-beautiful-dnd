@@ -3,7 +3,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import memoizeOne from 'memoize-one';
-import { getBody } from '../../root';
 import type {
   State,
   DroppableId,
@@ -235,7 +234,7 @@ const defaultProps = ({
   isCombineEnabled: false,
   ignoreContainerClipping: false,
   renderClone: null,
-  getContainerForClone: getBody,
+  getContainerForClone: null,
 }: DefaultProps);
 
 // Abstract class allows to specify props and defaults to component.

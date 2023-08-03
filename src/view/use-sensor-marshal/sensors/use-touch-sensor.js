@@ -18,7 +18,7 @@ import * as keyCodes from '../../key-codes';
 import supportedPageVisibilityEventName from './util/supported-page-visibility-event-name';
 import { noop } from '../../../empty';
 import useLayoutEffect from '../../use-isomorphic-layout-effect';
-import { getBody } from '../../../root';
+import { useDOMContext } from '../../../root';
 
 type TouchWithForce = Touch & {
   force: number,
@@ -248,6 +248,8 @@ export default function useTouchSensor(api: SensorAPI) {
   const phaseRef = useRef<Phase>(idle);
   const unbindEventsRef = useRef<() => void>(noop);
 
+  const ctx = useDOMContext();
+
   const getPhase = useCallback(function getPhase(): Phase {
     return phaseRef.current;
   }, []);
@@ -314,7 +316,7 @@ export default function useTouchSensor(api: SensorAPI) {
       };
 
       unbindEventsRef.current = bindEvents(
-        getBody(),
+        ctx.body,
         [startCaptureBinding],
         options,
       );
@@ -367,8 +369,8 @@ export default function useTouchSensor(api: SensorAPI) {
       // Old behaviour:
       // https://gist.github.com/parris/dda613e3ae78f14eb2dc9fa0f4bfce3d
       // https://stackoverflow.com/questions/33298828/touch-move-event-dont-fire-after-touch-start-target-is-removed
-      const unbindTarget = bindEvents(getBody(), getHandleBindings(args), options);
-      const unbindWindow = bindEvents(getBody(), getWindowBindings(args), options);
+      const unbindTarget = bindEvents(ctx.body, getHandleBindings(args), options);
+      const unbindWindow = bindEvents(ctx.body, getWindowBindings(args), options);
 
       unbindEventsRef.current = function unbindAll() {
         unbindTarget();
@@ -446,7 +448,7 @@ export default function useTouchSensor(api: SensorAPI) {
   // touchmove event handlers to actually work
   // https://github.com/atlassian/react-beautiful-dnd/issues/1374
   useLayoutEffect(function webkitHack() {
-    const unbind = bindEvents(getBody(), [
+    const unbind = bindEvents(ctx.body, [
       {
         eventName: 'touchmove',
         // using a new noop function for each usage as a single `removeEventListener()`

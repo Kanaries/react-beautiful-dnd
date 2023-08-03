@@ -5,7 +5,6 @@ import type {
   OwnProps,
   DispatchProps,
 } from '../../../../../src/view/droppable/droppable-types';
-import getBodyElement from '../../../../../src/view/get-body-element';
 
 export const preset = getPreset();
 
@@ -18,7 +17,7 @@ export const homeOwnProps: OwnProps = {
   direction: preset.home.axis.direction,
   ignoreContainerClipping: false,
   children: () => null,
-  getContainerForClone: getBodyElement,
+  getContainerForClone: null,
   renderClone: null,
 };
 

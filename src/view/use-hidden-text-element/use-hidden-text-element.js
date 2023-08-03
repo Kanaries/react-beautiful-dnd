@@ -2,8 +2,8 @@
 import { useEffect } from 'react';
 import { useMemo } from 'use-memo-one';
 import type { ContextId, ElementId } from '../../types';
-import getBodyElement from '../get-body-element';
 import useUniqueId from '../use-unique-id';
+import { useDOMContext } from '../../root';
 
 type GetIdArgs = {|
   contextId: ContextId,
@@ -29,6 +29,8 @@ export default function useHiddenTextElement({
     contextId,
   ]);
 
+  const ctx = useDOMContext();
+
   useEffect(
     function mount() {
       const el: HTMLElement = document.createElement('div');
@@ -43,11 +45,11 @@ export default function useHiddenTextElement({
       el.style.display = 'none';
 
       // Add to body
-      getBodyElement().appendChild(el);
+      ctx.body.appendChild(el);
 
       return function unmount() {
         // checking if element exists as the body might have been changed by things like 'turbolinks'
-        const body: HTMLBodyElement = getBodyElement();
+        const body: HTMLBodyElement = ctx.body;
         if (body.contains(el)) {
           body.removeChild(el);
         }

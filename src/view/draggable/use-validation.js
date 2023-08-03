@@ -8,12 +8,15 @@ import checkIsValidInnerRef from '../check-is-valid-inner-ref';
 import findDragHandle from '../get-elements/find-drag-handle';
 import useDevSetupWarning from '../use-dev-setup-warning';
 import useDev from '../use-dev';
+import { useDOMContext } from '../../root';
 
 export function useValidation(
   props: Props,
   contextId: ContextId,
   getRef: () => ?HTMLElement,
 ) {
+  const ctx = useDOMContext();
+
   // running after every update in development
   useDevSetupWarning(() => {
     function prefix(id: DraggableId): string {
@@ -46,7 +49,7 @@ export function useValidation(
     // When not enabled there is no drag handle props
     if (props.isEnabled) {
       invariant(
-        findDragHandle(contextId, id),
+        findDragHandle(ctx.body, contextId, id),
         `${prefix(id)} Unable to find drag handle`,
       );
     }

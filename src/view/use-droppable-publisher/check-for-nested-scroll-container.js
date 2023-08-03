@@ -4,12 +4,13 @@ import { warning } from '../../dev-warning';
 
 // We currently do not support nested scroll containers
 // But will hopefully support this soon!
-export default (scrollable: ?Element) => {
+export default (body: HTMLBodyElement, scrollable: ?Element) => {
   if (!scrollable) {
     return;
   }
 
   const anotherScrollParent: ?Element = getClosestScrollable(
+    body,
     scrollable.parentElement,
   );
 

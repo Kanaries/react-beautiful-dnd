@@ -32,6 +32,7 @@ import useRequiredContext from '../use-required-context';
 import usePreviousRef from '../use-previous-ref';
 import useLayoutEffect from '../use-isomorphic-layout-effect';
 import useUniqueId from '../use-unique-id';
+import { useDOMContext } from '../../root';
 
 type Props = {|
   droppableId: DroppableId,
@@ -119,6 +120,8 @@ export default function useDroppablePublisher(args: Props) {
     scheduleScrollUpdate();
   }, [scheduleScrollUpdate, updateScroll]);
 
+  const ctx = useDOMContext();
+
   const getDimensionAndWatchScroll = useCallback(
     (windowScroll: Position, options: ScrollOptions) => {
       invariant(
@@ -128,7 +131,7 @@ export default function useDroppablePublisher(args: Props) {
       const previous: Props = previousRef.current;
       const ref: ?HTMLElement = previous.getDroppableRef();
       invariant(ref, 'Cannot collect without a droppable ref');
-      const env: Env = getEnv(ref);
+      const env: Env = getEnv(ctx.body, ref);
 
       const dragging: WhileDragging = {
         ref,
@@ -166,13 +169,13 @@ export default function useDroppablePublisher(args: Props) {
         );
         // print a debug warning if using an unsupported nested scroll container setup
         if (process.env.NODE_ENV !== 'production') {
-          checkForNestedScrollContainers(scrollable);
+          checkForNestedScrollContainers(ctx.body, scrollable);
         }
       }
 
       return dimension;
     },
-    [appContext.contextId, descriptor, onClosestScroll, previousRef],
+    [appContext.contextId, descriptor, onClosestScroll, previousRef, ctx],
   );
 
   const getScrollWhileDragging = useCallback((): Position => {

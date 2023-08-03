@@ -22,6 +22,7 @@ import AnimateInOut, {
   type AnimateProvided,
 } from '../animate-in-out/animate-in-out';
 import { PrivateDraggable } from '../draggable/draggable-api';
+import { useDOMContext } from '../../root';
 
 export default function Droppable(props: Props) {
   const appContext: ?AppContextValue = useContext<?AppContextValue>(AppContext);
@@ -132,6 +133,8 @@ export default function Droppable(props: Props) {
     [droppableId, isUsingCloneFor, type],
   );
 
+  const ctx = useDOMContext();
+
   function getClone(): ?Node {
     if (!useClone) {
       return null;
@@ -155,7 +158,7 @@ export default function Droppable(props: Props) {
       </PrivateDraggable>
     );
 
-    return ReactDOM.createPortal(node, getContainerForClone());
+    return ReactDOM.createPortal(node, getContainerForClone ? getContainerForClone() : ctx.body);
   }
 
   return (

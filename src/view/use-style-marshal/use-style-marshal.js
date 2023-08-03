@@ -8,7 +8,7 @@ import type { ContextId, DropReason } from '../../types';
 import getStyles, { type Styles } from './get-styles';
 import { prefix } from '../data-attributes';
 import useLayoutEffect from '../use-isomorphic-layout-effect';
-import { getHead } from '../../root';
+import { useDOMContext } from '../../root';
 
 const createStyleEl = (nonce?: string): HTMLStyleElement => {
   const el: HTMLStyleElement = document.createElement('style');
@@ -23,6 +23,7 @@ export default function useStyleMarshal(contextId: ContextId, nonce?: string) {
   const styles: Styles = useMemo(() => getStyles(contextId), [contextId]);
   const alwaysRef = useRef<?HTMLStyleElement>(null);
   const dynamicRef = useRef<?HTMLStyleElement>(null);
+  const ctx = useDOMContext();
 
   const setDynamicStyle = useCallback(
     // Using memoizeOne to prevent frequent updates to textContext
@@ -59,8 +60,8 @@ export default function useStyleMarshal(contextId: ContextId, nonce?: string) {
     dynamic.setAttribute(`${prefix}-dynamic`, contextId);
 
     // add style tags to head
-    getHead().appendChild(always);
-    getHead().appendChild(dynamic);
+    ctx.head.appendChild(always);
+    ctx.head.appendChild(dynamic);
 
     // set initial style
     setAlwaysStyle(styles.always);
@@ -70,7 +71,7 @@ export default function useStyleMarshal(contextId: ContextId, nonce?: string) {
       const remove = (ref) => {
         const current: ?HTMLStyleElement = ref.current;
         invariant(current, 'Cannot unmount ref as it is not set');
-        getHead().removeChild(current);
+        ctx.head.removeChild(current);
         ref.current = null;
       };
 

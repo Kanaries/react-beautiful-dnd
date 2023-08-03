@@ -1,7 +1,6 @@
 // @flow
 import { invariant } from '../../invariant';
 import { warning } from '../../dev-warning';
-import getBodyElement from '../get-body-element';
 
 type Overflow = {|
   overflowX: string,
@@ -29,13 +28,12 @@ const isElementScrollable = (el: Element): boolean => {
 
 // Special case for a body element
 // Playground: https://codepen.io/alexreardon/pen/ZmyLgX?editors=1111
-const isBodyScrollable = (): boolean => {
+const isBodyScrollable = (body: HTMLBodyElement): boolean => {
   // Because we always return false for now, we can skip any actual processing in production
   if (process.env.NODE_ENV === 'production') {
     return false;
   }
 
-  const body: HTMLBodyElement = getBodyElement();
   const html: ?HTMLElement = document.documentElement;
   invariant(html);
 
@@ -67,7 +65,7 @@ const isBodyScrollable = (): boolean => {
   return false;
 };
 
-const getClosestScrollable = (el: ?Element): ?Element => {
+const getClosestScrollable = (body: HTMLBodyElement, el: ?Element): ?Element => {
   // cannot do anything else!
   if (el == null) {
     return null;
@@ -75,7 +73,7 @@ const getClosestScrollable = (el: ?Element): ?Element => {
 
   // not allowing us to go higher then body
   if (el === document.body) {
-    return isBodyScrollable() ? el : null;
+    return isBodyScrollable(body) ? el : null;
   }
 
   // Should never get here, but just being safe
@@ -85,7 +83,7 @@ const getClosestScrollable = (el: ?Element): ?Element => {
 
   if (!isElementScrollable(el)) {
     // keep recursing
-    return getClosestScrollable(el.parentElement);
+    return getClosestScrollable(body, el.parentElement);
   }
 
   // success!

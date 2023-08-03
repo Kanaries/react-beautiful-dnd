@@ -48,6 +48,7 @@ import { noop } from '../../empty';
 import findClosestDraggableIdFromEvent from './find-closest-draggable-id-from-event';
 import findDraggable from '../get-elements/find-draggable';
 import bindEvents from '../event-bindings/bind-events';
+import { useDOMContext } from '../../root';
 
 function preventDefault(event: Event) {
   event.preventDefault();
@@ -142,6 +143,7 @@ function canStart({
 }
 
 type TryStartArgs = {|
+  body: HTMLElement,
   lockAPI: LockAPI,
   contextId: ContextId,
   registry: Registry,
@@ -152,6 +154,7 @@ type TryStartArgs = {|
 |};
 
 function tryStart({
+  body,
   lockAPI,
   contextId,
   store,
@@ -172,7 +175,7 @@ function tryStart({
   }
 
   const entry: DraggableEntry = registry.draggable.getById(draggableId);
-  const el: ?HTMLElement = findDraggable(contextId, entry.descriptor.id);
+  const el: ?HTMLElement = findDraggable(body, contextId, entry.descriptor.id);
 
   if (!el) {
     warning(`Unable to find draggable element with id: ${draggableId}`);
@@ -407,6 +410,8 @@ export default function useSensorMarshal({
     return lockAPI.tryAbandon;
   }, [lockAPI.tryAbandon]);
 
+  const ctx = useDOMContext();
+
   const canGetLock = useCallback(
     (draggableId: DraggableId): boolean => {
       return canStart({
@@ -426,6 +431,7 @@ export default function useSensorMarshal({
       options?: TryGetLockOptions,
     ): ?PreDragActions =>
       tryStart({
+        body: ctx.body,
         lockAPI,
         registry,
         contextId,
@@ -435,7 +441,7 @@ export default function useSensorMarshal({
         sourceEvent:
           options && options.sourceEvent ? options.sourceEvent : null,
       }),
-    [contextId, lockAPI, registry, store],
+    [contextId, lockAPI, registry, store, ctx],
   );
 
   const findClosestDraggableId = useCallback(

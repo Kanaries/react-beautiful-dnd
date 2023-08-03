@@ -20,7 +20,7 @@ import preventStandardKeyEvents from './util/prevent-standard-key-events';
 import supportedPageVisibilityEventName from './util/supported-page-visibility-event-name';
 import useLayoutEffect from '../../use-isomorphic-layout-effect';
 import { noop } from '../../../empty';
-import { getBody } from '../../../root';
+import { useDOMContext } from '../../../root';
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
 export const primaryButton: number = 0;
@@ -211,6 +211,8 @@ export default function useMouseSensor(api: SensorAPI) {
   const phaseRef = useRef<Phase>(idle);
   const unbindEventsRef = useRef<() => void>(noop);
 
+  const ctx = useDOMContext();
+
   const startCaptureBinding: EventBinding = useMemo(
     () => ({
       eventName: 'mousedown',
@@ -309,7 +311,7 @@ export default function useMouseSensor(api: SensorAPI) {
       };
 
       unbindEventsRef.current = bindEvents(
-        getBody(),
+        ctx.body,
         [preventForcePressBinding, startCaptureBinding],
         options,
       );
@@ -352,7 +354,7 @@ export default function useMouseSensor(api: SensorAPI) {
         },
       });
 
-      unbindEventsRef.current = bindEvents(getBody(), bindings, options);
+      unbindEventsRef.current = bindEvents(ctx.body, bindings, options);
     },
     [cancel, stop],
   );

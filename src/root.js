@@ -1,16 +1,14 @@
-let documentEl = document;
-let headEl = null;
-let bodyEl = null;
+import { createContext, useContext } from "react";
 
-/** @returns {HTMLElement | ShadowRoot} */
-export const getDocument = () => documentEl;
 
-/** @returns {HTMLElement | ShadowRoot} */
-export const getHead = () => headEl;
-/** @param {HTMLElement | ShadowRoot} head */
-export const setHead = (head) => headEl = head;
+/** @type {import('react').Context<{ head: HTMLElement | ShadowRoot; body: HTMLElement | ShadowRoot }>} */
+const Context = createContext({
+  head: document.head,
+  body: document.body,
+});
 
-/** @returns {HTMLElement | ShadowRoot} */
-export const getBody = () => bodyEl;
-/** @param {HTMLElement | ShadowRoot} body */
-export const setBody = (body) => bodyEl = body;
+export const useDOMContext = () => {
+  return useContext(Context);
+};
+
+export const DOMProvider = Context.Provider;

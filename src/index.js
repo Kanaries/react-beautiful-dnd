@@ -1,6 +1,6 @@
 // @flow
 
-export * as DOM from './root';
+export { DOMProvider } from './root';
 
 // Components
 
