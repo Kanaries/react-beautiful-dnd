@@ -6,7 +6,6 @@ import babel from 'rollup-plugin-babel';
 import replace from 'rollup-plugin-replace';
 import strip from 'rollup-plugin-strip';
 import { terser } from 'rollup-plugin-terser';
-import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
 import json from 'rollup-plugin-json';
 import pkg from './package.json';
 
@@ -22,14 +21,6 @@ const getBabelOptions = ({ useESModules }) => ({
   runtimeHelpers: true,
   plugins: [['@babel/transform-runtime', { useESModules }]],
 });
-
-const snapshotArgs =
-  process.env.SNAPSHOT === 'match'
-    ? {
-        matchSnapshot: true,
-        threshold: 1000,
-      }
-    : {};
 
 const commonjsArgs = {
   include: 'node_modules/**',
@@ -63,7 +54,6 @@ export default [
       resolve({ extensions }),
       commonjs(commonjsArgs),
       replace({ 'process.env.NODE_ENV': JSON.stringify('development') }),
-      sizeSnapshot(snapshotArgs),
     ],
   },
 
@@ -85,7 +75,6 @@ export default [
       commonjs(commonjsArgs),
       strip(),
       replace({ 'process.env.NODE_ENV': JSON.stringify('production') }),
-      sizeSnapshot(snapshotArgs),
       terser(),
       // Useful for debugging: you can see what code is dropped
       // terser({
@@ -122,7 +111,6 @@ export default [
       json(),
       resolve({ extensions }),
       babel(getBabelOptions({ useESModules: true })),
-      sizeSnapshot(snapshotArgs),
     ],
   },
 ];
