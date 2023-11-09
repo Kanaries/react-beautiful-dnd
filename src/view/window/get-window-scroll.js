@@ -24,7 +24,13 @@ import { type Position } from 'css-box-model';
 // documentElement.scrollTop: no update. Stays at 0
 // window.pageYOffset: updates to whole number
 
-export default (): Position => ({
-  x: window.pageXOffset,
-  y: window.pageYOffset,
-});
+export default (): Position =>
+  window['__react-beautiful-dnd-disable-scroll-hack']
+    ? {
+        x: 0,
+        y: 0,
+      }
+    : {
+        x: window.pageXOffset,
+        y: window.pageYOffset,
+      };
