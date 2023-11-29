@@ -1,6 +1,6 @@
 {
   "name": "@kanaries/react-beautiful-dnd",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Beautiful and accessible drag and drop for lists with React, supports shadow DOM",
   "author": "Alex Reardon <areardon@atlassian.com>",
   "keywords": [
